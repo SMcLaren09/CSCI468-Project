@@ -1,22 +1,34 @@
-import org.antlr.v4.*;
 
-public static void main(String[] args) {
+//package antlrproject;
 
-	try {
-		CharStream stream = new ANTLRInputStream(System.in);
-		JunkLexer lexer = new JunkLexer(stream);
-		Vacabulary vocab = lexer.getVocabulary();
-		Token tok = null;
+import java.io.*;
+import org.antlr.v4.runtime.*;
 
-		do {
-			tok = lexer.nextToken();
-			System.out.println("\t" + vocab.getSymbolicName(tok.getType()) + "\t" + tok.getText());
+/**
+ *
+ * @author Ryan Darnell
+ */
+public class Driver {
 
-		} while (tok.getType() != "EOF");
-
-	} catch(Exception e) {
-		System.out.println("Failed to do some stuff");
-	}
-
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        
+        try {
+            CharStream stream = new ANTLRInputStream(System.in);
+            junkLexer lexer = new junkLexer(stream);
+            Vocabulary vocab = lexer.getVocabulary();
+            Token tok = null;
+            
+            do {
+                tok = lexer.nextToken();
+                System.out.println("\t" + vocab.getSymbolicName(tok.getType()) +
+                                    "\t" + tok.getText());
+            } while(tok.getType() != tok.EOF);
+        } catch (Exception ex) {
+            System.out.println("Failed to do stuff");
+        }
+    }
 
 }
