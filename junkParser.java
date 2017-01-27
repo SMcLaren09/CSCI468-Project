@@ -16,7 +16,7 @@ public class junkParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		IDENTIFIER=1, INTLITERAL=2, FLOATLITERAL=3, STRINGLITERAL=4, COMMENT=5, 
+		COMMENT=1, IDENTIFIER=2, INTLITERAL=3, FLOATLITERAL=4, STRINGLITERAL=5, 
 		WS=6;
 	public static final int
 		RULE_tokens = 0;
@@ -27,7 +27,7 @@ public class junkParser extends Parser {
 	private static final String[] _LITERAL_NAMES = {
 	};
 	private static final String[] _SYMBOLIC_NAMES = {
-		null, "IDENTIFIER", "INTLITERAL", "FLOATLITERAL", "STRINGLITERAL", "COMMENT", 
+		null, "COMMENT", "IDENTIFIER", "INTLITERAL", "FLOATLITERAL", "STRINGLITERAL", 
 		"WS"
 	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
@@ -105,7 +105,7 @@ public class junkParser extends Parser {
 			setState(5);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << IDENTIFIER) | (1L << INTLITERAL) | (1L << FLOATLITERAL) | (1L << STRINGLITERAL) | (1L << COMMENT) | (1L << WS))) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << COMMENT) | (1L << IDENTIFIER) | (1L << INTLITERAL) | (1L << FLOATLITERAL) | (1L << STRINGLITERAL) | (1L << WS))) != 0)) {
 				{
 				{
 				setState(2);

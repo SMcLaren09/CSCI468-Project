@@ -1,0 +1,10 @@
+#!/bin/bash
+
+echo "Running bash..."
+java -cp antlr.jar org.antlr.v4.Tool junk.g4
+echo "compiling java file"
+javac -cp .:antlr.jar Driver.java
+echo "hopefully file compiled successfully..."
+echo "running current java program"
+java -cp .:antlr.jar Driver
+

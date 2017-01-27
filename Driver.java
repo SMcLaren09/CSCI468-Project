@@ -16,15 +16,16 @@ public class Driver {
     public static void main(String[] args) {
         
         try {
-            CharStream stream = new ANTLRInputStream(System.in);
+	    FileReader file = new FileReader("inputs/loop.micro");
+            CharStream stream = new ANTLRInputStream(file);
             junkLexer lexer = new junkLexer(stream);
             Vocabulary vocab = lexer.getVocabulary();
             Token tok = null;
             
             do {
                 tok = lexer.nextToken();
-                System.out.println("\t" + vocab.getSymbolicName(tok.getType()) +
-                                    "\t" + tok.getText());
+                System.out.println("Token-->\tType: " + vocab.getSymbolicName(tok.getType()) +
+                                    "\tValue: " + tok.getText());
             } while(tok.getType() != tok.EOF);
         } catch (Exception ex) {
             System.out.println("Failed to do stuff");
