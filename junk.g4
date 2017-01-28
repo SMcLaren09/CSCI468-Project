@@ -2,10 +2,9 @@ grammar junk;
 
 tokens: .* EOF;
 
-COMMENT: '--'~('\n')*;
-/*('\r\n'|'\n')*/
+KEYWORD: ('PROGRAM'|'BEGIN'|'END'|'FUNCTION'|'READ'|'WRITE'|'IF'|'ELSE'|'ENDIF'|'WHILE'|'ENDWHILE'|'CONTINUE'|'BREAK'|'RETURN'|'INT'|'VOID'|'STRING'|'FLOAT');
 
-STRINGLITERAL: '"'(~")*'"';
+STRINGLITERAL: '"'(.*?)'"';
 
 IDENTIFIER: [a-zA-Z][a-zA-Z0-9]*;
 
@@ -13,7 +12,8 @@ INTLITERAL: [0-9]+;
 
 FLOATLITERAL: [0-9]*'.'[0-9]+;
 
-/*STRINGLITERAL: '"'[~"]+'"';*/
+OPERATOR: (':='|'+'|'-'|'*'|'/'|'='|'!='|'<'|'>'|'('|')'|';'|','|'<='|'>=');
 
-WS : [ \r\n\t]+;
+COMMENT: '--'~('\n')* -> skip ;
 
+WS: [ \r\n\t]+ -> skip ;
