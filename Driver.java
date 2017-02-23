@@ -14,13 +14,16 @@ public class Driver {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-
+	
+	
         try {
 	    FileReader file = new FileReader(args[0]);
             CharStream stream = new ANTLRInputStream(file);
             junkLexer lexer = new junkLexer(stream);
             Vocabulary vocab = lexer.getVocabulary();
             Token tok = null;
+	    System.out.println("Attempting to grab tokens");
+	    System.out.println(lexer.nextToken());
 
             do {
                 tok = lexer.nextToken();

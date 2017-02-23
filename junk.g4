@@ -10,7 +10,7 @@ pgm_body          : decl func_declarations;
 decl		        : string_decl decl | var_decl decl | /*empty*/;
 
 /* Global String Declaration */
-string_decl       : 'STRING' id ':=' str ;;
+string_decl       : 'STRING' id ':=' str ';';
 str               : 'STRINGLITERAL';
 
 /* Variable Declaration */
@@ -23,7 +23,7 @@ id_tail           : ',' id id_tail | /*empty*/;
 /* Function Paramater List */
 param_decl_list   : param_decl param_decl_tail | /*empty*/;
 param_decl        : var_type id;
-param_decl_tail   : , param_decl param_decl_tail | /*empty*/;
+param_decl_tail   : ',' param_decl param_decl_tail | /*empty*/;
 
 /* Function Declarations */
 func_declarations : func_decl func_declarations | /*empty*/;
@@ -64,7 +64,7 @@ compop            : '<' | '>' | '=' | '!=' | '<=' | '>=';
 /* While statements */
 while_stmt       : 'WHILE' '(' cond ')' decl stmt_list 'ENDWHILE';
 
-------
+/*------*/
 
 tokens: .* EOF;
 
