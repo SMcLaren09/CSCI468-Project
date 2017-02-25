@@ -3,6 +3,7 @@
 
 import java.io.*;
 import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.tree.*;
 
 /**
  *
@@ -25,14 +26,24 @@ public class Driver {
 	    System.out.println("Attempting to grab tokens");
 	    System.out.println(lexer.nextToken());
 
-            do {
+	    CommonTokenStream tokens = new CommonTokenStream(lexer);
+	    junkParser parser = new junkParser(tokens);
+	    parser.program();
+//	    ParserRuleContext tree = parser.compilationUnit();
+//	    ParseTreeWalker walker = new ParseTreeWalker();
+//	    ExtractInterfaceListener extractor = new ExtractInterfaceListener(parser);
+//	    walker.walk(extractor, tree);
+
+	   // ParseTree tree = parser.init();
+	   // System.out.println(tree.toStringTree(parser));
+/**            do {
                 tok = lexer.nextToken();
 		if (tok.getType() == tok.EOF)
 		    break;
 		String tokenType;
                 System.out.println("Token Type: " + vocab.getSymbolicName(tok.getType()) +
                                    "\nValue: " + tok.getText());
-            } while(tok.getType() != tok.EOF);
+            } while(tok.getType() != tok.EOF);*/
         } catch (Exception ex) {
             System.out.println("Failed to do stuff");
         }
