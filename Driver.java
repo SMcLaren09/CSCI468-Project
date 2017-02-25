@@ -23,7 +23,7 @@ public class Driver {
             junkLexer lexer = new junkLexer(stream);
             Vocabulary vocab = lexer.getVocabulary();
             Token tok = null;
-	    System.out.println("Attempting to grab tokens");
+	    //System.out.println("Attempting to grab tokens");
 	    //System.out.println(lexer.nextToken());
 
 	    CommonTokenStream tokens = new CommonTokenStream(lexer);
