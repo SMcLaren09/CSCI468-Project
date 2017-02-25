@@ -24,18 +24,19 @@ public class Driver {
             Vocabulary vocab = lexer.getVocabulary();
             Token tok = null;
 	    System.out.println("Attempting to grab tokens");
-	    System.out.println(lexer.nextToken());
+	    //System.out.println(lexer.nextToken());
 
 	    CommonTokenStream tokens = new CommonTokenStream(lexer);
 	    junkParser parser = new junkParser(tokens);
 	    parser.program();
-//	    ParserRuleContext tree = parser.compilationUnit();
-//	    ParseTreeWalker walker = new ParseTreeWalker();
-//	    ExtractInterfaceListener extractor = new ExtractInterfaceListener(parser);
-//	    walker.walk(extractor, tree);
+	    //System.out.printf("Found %d errors\n", parser.getNumberOfSyntaxErrors());
+	    //System.out.println("Finished parsing.");
 
-	   // ParseTree tree = parser.init();
-	   // System.out.println(tree.toStringTree(parser));
+	    if (parser.getNumberOfSyntaxErrors() == 0) {
+  		System.out.println("Accepted");
+	    } else {
+		System.out.println("Not accepted");
+	    }
 /**            do {
                 tok = lexer.nextToken();
 		if (tok.getType() == tok.EOF)

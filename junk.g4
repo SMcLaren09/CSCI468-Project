@@ -5,13 +5,13 @@ small case symbols are non-terminals. */
 
 /* Program */
 program           : 'PROGRAM' id 'BEGIN' pgm_body 'END'; 
-id                : 'IDENTIFIER';
+id                : IDENTIFIER;
 pgm_body          : decl func_declarations;
 decl		        : string_decl decl | var_decl decl | /*empty*/;
 
 /* Global String Declaration */
 string_decl       : 'STRING' id ':=' str ';';
-str               : 'STRINGLITERAL';
+str               : STRINGLITERAL;
 
 /* Variable Declaration */
 var_decl          : var_type id_list ';';
@@ -51,7 +51,7 @@ postfix_expr      : primary | call_expr;
 call_expr         : id '(' expr_list ')';
 expr_list         : expr expr_list_tail | /*empty*/;
 expr_list_tail    : ',' expr expr_list_tail | /*empty*/;
-primary           : '(' expr ')' | id | 'INTLITERAL' | 'FLOATLITERAL';
+primary           : '(' expr ')' | id | INTLITERAL | FLOATLITERAL;
 addop             : '+' | '-';
 mulop             : '*' | '/';
 
