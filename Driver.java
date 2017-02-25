@@ -29,8 +29,14 @@ public class Driver {
 	    CommonTokenStream tokens = new CommonTokenStream(lexer);
 	    junkParser parser = new junkParser(tokens);
 	    parser.program();
+	    //System.out.printf("Found %d errors\n", parser.getNumberOfSyntaxErrors());
+	    //System.out.println("Finished parsing.");
 
-	    System.out.println("Finished parsing.");
+	    if (parser.getNumberOfSyntaxErrors() == 0) {
+  		System.out.println("Accepted");
+	    } else {
+		System.out.println("Not accepted");
+	    }
 /**            do {
                 tok = lexer.nextToken();
 		if (tok.getType() == tok.EOF)
