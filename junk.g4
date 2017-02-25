@@ -5,7 +5,7 @@ small case symbols are non-terminals. */
 
 /* Program */
 program           : 'PROGRAM' id 'BEGIN' pgm_body 'END'; 
-id                : 'IDENTIFIER';
+id                : IDENTIFIER;
 pgm_body          : decl func_declarations;
 decl		        : string_decl decl | var_decl decl | /*empty*/;
 
