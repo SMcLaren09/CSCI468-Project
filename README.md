@@ -3,7 +3,7 @@ Spring 2017
 
 Ryan Darnell
 Stephanie McLaren
-Tonia Schlick
+
 
 How to run GradeLab1 script:
 
