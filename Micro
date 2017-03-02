@@ -1,10 +1,20 @@
 #!/bin/bash
 
 #echo "Running bash..."
-java -cp antlr.jar org.antlr.v4.Tool junk.g4
-#echo "compiling java file"
-javac -cp .:antlr.jar Driver.java
+cd src/
+if [ ! -f "junk.tokens" ]; 
+then
+echo "Grammar file not compiled";
+java -cp antlr.jar org.antlr.v4.Tool junk.g4;
+fi
+
+if [ ! -f "Driver.class" ];
+then
+echo "compiling java file";
+javac -cp .:antlr.jar Driver.java;
+fi
+
 #echo "hopefully file compiled successfully..."
 #echo "running current java program"
-java -cp .:antlr.jar Driver $1
+java -cp .:antlr.jar Driver ../$1
 
