@@ -4,13 +4,13 @@
 cd src/
 if [ ! -f "junk.tokens" ]; 
 then
-echo "Grammar file not compiled";
+echo "Compiling Grammar file...";
 java -cp antlr.jar org.antlr.v4.Tool junk.g4;
 fi
 
 if [ ! -f "Driver.class" ];
 then
-echo "compiling java file";
+echo "Compiling Driver file...";
 javac -cp .:antlr.jar Driver.java;
 fi
 
