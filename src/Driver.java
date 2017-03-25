@@ -28,23 +28,19 @@ public class Driver {
 
 	    CommonTokenStream tokens = new CommonTokenStream(lexer);
 	    junkParser parser = new junkParser(tokens);
-	    parser.program();
+	    Listener listener = new Listener();
+	    new ParseTreeWalker().walk(listener, parser.program());
 	    //System.out.printf("Found %d errors\n", parser.getNumberOfSyntaxErrors());
 	    //System.out.println("Finished parsing.");
+	    //TokenStream tokens1 = parser.getTokenStream();
+
+	   // System.out.println(tokens1.get(0).getText());
 
 	    if (parser.getNumberOfSyntaxErrors() == 0) {
   		System.out.println("Accepted");
 	    } else {
 		System.out.println("Not accepted");
 	    }
-/**            do {
-                tok = lexer.nextToken();
-		if (tok.getType() == tok.EOF)
-		    break;
-		String tokenType;
-                System.out.println("Token Type: " + vocab.getSymbolicName(tok.getType()) +
-                                   "\nValue: " + tok.getText());
-            } while(tok.getType() != tok.EOF);*/
         } catch (Exception ex) {
             System.out.println("Failed to do stuff");
         }
