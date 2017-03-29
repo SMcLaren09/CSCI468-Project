@@ -49,6 +49,16 @@ public class Listener extends junkBaseListener {
 	}
 
 	@Override
+	public void enterId_list(junkParser.Id_listContext ctx) {
+		System.out.println("Enter id list");
+	}
+
+	@Override
+	public void exitId_list(junkParser.Id_listContext ctx) {
+		System.out.println("Exit id list");
+	}
+
+	@Override
 	public void exitVar_decl(junkParser.Var_declContext ctx) {
                 System.out.println("Exit Decl");
                 // System.out.println(ctx.getText());
@@ -83,12 +93,12 @@ public class Listener extends junkBaseListener {
 		System.out.println("Exit variable name");
                 //System.out.println(ctx.getText());
 
-		if (isFlag && !variableType.equals("STRING")) {
+	//	if (isFlag && !variableType.equals("STRING")) {
 		//	s.addSymbol(new Symbol(variableType, variableName));
 		//	variableName = null;
-		} else if (isFlag) { //case: Function name
+	//	} else if (isFlag) { //case: Function name
 		//	s.setName(ctx.getText());
-		}
+	//	}
 	}
 
 	@Override
