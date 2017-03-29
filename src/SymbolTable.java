@@ -22,12 +22,11 @@ public class SymbolTable {
 	}
 
 	public void addSymbol(Symbol symbol) {
-		System.out.println("Adding Symbol..." + symbols.toString());
-		if (!exists(symbol))
+//		System.out.println("Adding Symbol..." + symbols.toString());
+		if (!exists(symbol)) {
 			symbols.put(symbol.getName(), symbol);
 			inOrder.add(symbol);
-		else
-			System.out.println("Symbol already exists!");
+		}
 	}
 
 	public void addChild(SymbolTable table) {
@@ -53,8 +52,8 @@ public class SymbolTable {
 
 	public void printAll() {
 		printTable();
-		System.out.println(); //line space
 		for (SymbolTable table : children) {
+			System.out.println(); //line space
 			table.printAll();
 		}
 	}
@@ -62,7 +61,7 @@ public class SymbolTable {
 	private boolean exists(Symbol symbol) {
 		if (symbols.containsKey(symbol.getName()) || ancestorSymbols.containsKey(symbol.getName()))
 			return true;
-		else 
+		else
 			return false;
 	}
 
