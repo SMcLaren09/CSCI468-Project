@@ -58,11 +58,14 @@ public class Listener extends junkBaseListener {
 
 	@Override
 	public void exitVar_decl(junkParser.Var_declContext ctx) {
-//		System.out.println("Exit Decl");
-		// System.out.println(ctx.getText());
+		System.out.println("Exit Var Decl");
+		System.out.println(ctx.getText());
+		System.out.println("VariableName size: " + variableName.size());
 
-		for (String name : variableName)
-            	s.addSymbol(new Symbol(variableType, name));
+		for (String name : variableName) {
+	            	s.addSymbol(new Symbol(variableType, name));
+			s.printTable();
+		}
 
         	variableType = null;
         	variableName.clear();

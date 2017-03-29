@@ -4,7 +4,7 @@ public class SymbolTable {
 
 	private String name;
 	private HashMap<String, Symbol> symbols;
-    private ArrayList<Symbol> inOrder;
+	private ArrayList<Symbol> inOrder;
 	private HashMap<String, Symbol> ancestorSymbols;
 	private SymbolTable parent;
 	private ArrayList<SymbolTable> children;
