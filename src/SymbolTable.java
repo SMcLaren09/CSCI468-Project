@@ -4,6 +4,7 @@ public class SymbolTable {
 
 	private String name;
 	private HashMap<String, Symbol> symbols;
+    private ArrayList<Symbol> inOrder;
 	private HashMap<String, Symbol> ancestorSymbols;
 	private SymbolTable parent;
 	private ArrayList<SymbolTable> children;
@@ -12,6 +13,8 @@ public class SymbolTable {
 		this.parent = parent;
 		this.ancestorSymbols = (ancestorSymbols == null) ? new HashMap<>() : ancestorSymbols;
 		symbols = new HashMap<>();
+		inOrder = new ArrayList<>();
+		children = new ArrayList<>();
 	}
 
 	public void setName(String name) {
@@ -22,6 +25,7 @@ public class SymbolTable {
 		System.out.println("Adding Symbol..." + symbols.toString());
 		if (!exists(symbol))
 			symbols.put(symbol.getName(), symbol);
+			inOrder.add(symbol);
 		else
 			System.out.println("Symbol already exists!");
 	}
@@ -42,7 +46,7 @@ public class SymbolTable {
 
 	public void printTable() {
 		System.out.println("Symbol table " + name);
-		for (Symbol symbol : symbols.values()) {
+		for (Symbol symbol : inOrder) {
 			symbol.print();
 		}
 	}
