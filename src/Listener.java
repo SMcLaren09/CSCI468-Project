@@ -21,8 +21,8 @@ public class Listener extends junkBaseListener {
 	public void exitProgram(junkParser.ProgramContext ctx) {
 		System.out.println("Exiting Program...");
                 //System.out.println(ctx.getText());
-		System.out.println("Printing Tables");
-		s.printAll();
+	//	System.out.println("Printing Tables");
+	//	s.printAll();
         }
 
 	@Override
@@ -30,7 +30,7 @@ public class Listener extends junkBaseListener {
 		System.out.println("enterFunc...");
 		System.out.println(ctx.getText());
 
-		pushSymbolTable();
+		//pushSymbolTable();
 		isFlag = true;
 	}
 
@@ -43,7 +43,7 @@ public class Listener extends junkBaseListener {
 	@Override
 	public void enterVar_decl(junkParser.Var_declContext ctx) {
 		System.out.println("Enter Variable Declaration");
-		System.out.println(ctx.getText());
+		//System.out.println(ctx.getText());
 
 		isFlag = true;
 	}
@@ -73,8 +73,8 @@ public class Listener extends junkBaseListener {
 		//System.out.println("Parent: " + ctx.getParent().toInfoString());
 
 		if(isFlag) {
-			if (symbol == null) { s.setName(ctx.getText()); }
-			else { variableName = ctx.getText(); }
+		//	if (symbol == null) { s.setName(ctx.getText()); }
+		//	else { variableName = ctx.getText(); }
 		}
 	}
 
@@ -84,10 +84,10 @@ public class Listener extends junkBaseListener {
                 //System.out.println(ctx.getText());
 
 		if (isFlag && !variableType.equals("STRING")) {
-			s.addSymbol(new Symbol(variableType, variableName));
-			variableName = null;
+		//	s.addSymbol(new Symbol(variableType, variableName));
+		//	variableName = null;
 		} else if (isFlag) { //case: Function name
-			s.setName(ctx.getText());
+		//	s.setName(ctx.getText());
 		}
 	}
 
@@ -103,7 +103,7 @@ public class Listener extends junkBaseListener {
 	public void exitString_decl(junkParser.String_declContext ctx) {
 		System.out.println("Exit String decl");
 
-		s.addSymbol(new Symbol(variableType, variableName, variableValue));
+		//s.addSymbol(new Symbol(variableType, variableName, variableValue));
 		variableType = null;
 		variableName = null;
 		variableValue = null;
@@ -122,8 +122,8 @@ public class Listener extends junkBaseListener {
                 System.out.println("Enter If stmt");
                 System.out.println(ctx.getText());
 
-		pushSymbolTable();
-		s.setName("BLOCK " + block);
+	//	pushSymbolTable();
+	//	s.setName("BLOCK " + block);
         }
 
 	@Override
@@ -132,7 +132,7 @@ public class Listener extends junkBaseListener {
                // System.out.println(ctx.getText());
 
 		block++;
-		popSymbolTable();
+	//	popSymbolTable();
         }
 
 	@Override
@@ -140,8 +140,8 @@ public class Listener extends junkBaseListener {
                 System.out.println("Enter Else stmt");
                 System.out.println(ctx.getText());
 
-		pushSymbolTable();
-		s.setName("BLOCK " + block);
+	//	pushSymbolTable();
+	//	s.setName("BLOCK " + block);
         }
 
 	@Override
@@ -149,8 +149,8 @@ public class Listener extends junkBaseListener {
                 System.out.println("Exit Else stmt");
                 //System.out.println(ctx.getText());
 
-		block++;
-		popSymbolTable();
+	//	block++;
+	//	popSymbolTable();
         }
 
 	@Override
@@ -158,16 +158,16 @@ public class Listener extends junkBaseListener {
                 System.out.println("Enter While stmt");
                 System.out.println(ctx.getText());
 
-		pushSymbolTable();
-		s.setName("BLOCK " + block);
+	//	pushSymbolTable();
+	//	s.setName("BLOCK " + block);
         }
 
 	@Override
 	public void exitWhile_stmt(junkParser.While_stmtContext ctx) {
 		System.out.println("Exit While stmt");
 
-		block++;
-		popSymbolTable();
+	//	block++;
+	//	popSymbolTable();
 	}
 
 	public SymbolTable getSymbolTable() {
