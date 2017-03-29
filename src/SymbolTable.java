@@ -10,7 +10,7 @@ public class SymbolTable {
 
 	public SymbolTable(SymbolTable parent, HashMap<String, Symbol> ancestorSymbols){
 		this.parent = parent;
-		this.ancestorSymbols = ancestorSymbols;
+		this.ancestorSymbols = (ancestorSymbols == null) ? new HashMap<>() : ancestorSymbols;
 		symbols = new HashMap<>();
 	}
 
@@ -19,6 +19,7 @@ public class SymbolTable {
 	}
 
 	public void addSymbol(Symbol symbol) {
+		System.out.println("Adding Symbol..." + symbols.toString());
 		if (!exists(symbol))
 			symbols.put(symbol.getName(), symbol);
 		else
@@ -32,6 +33,7 @@ public class SymbolTable {
 	public SymbolTable createChild() {
 		SymbolTable child = new SymbolTable(this, packageSymbols());
 		addChild(child);
+		return child;
 	}
 
 	public SymbolTable getParent() {
@@ -56,7 +58,7 @@ public class SymbolTable {
 	private boolean exists(Symbol symbol) {
 		if (symbols.containsKey(symbol.getName()) || ancestorSymbols.containsKey(symbol.getName()))
 			return true;
-		else
+		else 
 			return false;
 	}
 

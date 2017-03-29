@@ -41,9 +41,11 @@ public class Driver {
 	    } else {
 		System.out.println("Not accepted");
 	    }
-        } catch (Exception ex) {
+        } catch (FileNotFoundException ex) {
             System.out.println("Failed to do stuff");
-        }
+        } catch (IOException ex) {
+			System.out.println("Failed to do stuff");
+		}
     }
 
 }
