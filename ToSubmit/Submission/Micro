@@ -10,8 +10,10 @@ fi
 
 if [ ! -f "Driver.class" ];
 then
-echo "Compiling Driver file...";
+#echo "Compiling Driver file...";
 javac -cp .:antlr.jar Driver.java;
+javac  Symbol.java;
+javac  SymbolTable.java;
 fi
 
 #echo "hopefully file compiled successfully..."
