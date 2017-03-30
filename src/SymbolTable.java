@@ -22,10 +22,13 @@ public class SymbolTable {
 	}
 
 	public void addSymbol(Symbol symbol) {
-//		System.out.println("Adding Symbol..." + symbols.toString());
+		//System.out.println("Adding Symbol..." + symbol.toString());
 		if (!exists(symbol)) {
 			symbols.put(symbol.getName(), symbol);
 			inOrder.add(symbol);
+		} else {
+			System.out.println("DECLARATION ERROR " + symbol.getName());
+			System.exit(1);
 		}
 	}
 
@@ -59,7 +62,7 @@ public class SymbolTable {
 	}
 
 	private boolean exists(Symbol symbol) {
-		if (symbols.containsKey(symbol.getName()) || ancestorSymbols.containsKey(symbol.getName()))
+		if (symbols.containsKey(symbol.getName())) // || ancestorSymbols.containsKey(symbol.getName()))
 			return true;
 		else
 			return false;

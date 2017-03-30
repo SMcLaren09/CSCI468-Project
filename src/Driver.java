@@ -36,11 +36,11 @@ public class Driver {
 
 	   // System.out.println(tokens1.get(0).getText());
 
-	    if (parser.getNumberOfSyntaxErrors() == 0) {
-  		System.out.println("Accepted");
-	    } else {
-		System.out.println("Not accepted");
-	    }
+//	    if (parser.getNumberOfSyntaxErrors() == 0) {
+//  		System.out.println("Accepted");
+//	    } else {
+//		System.out.println("Not accepted");
+//	    }
         } catch (FileNotFoundException ex) {
             System.out.println("Failed to do stuff");
         } catch (IOException ex) {
