@@ -171,4 +171,15 @@ public class Listener extends junkBaseListener {
 		//s = newTable;
 		s = s.createChild();
 	}
+
+	@Override
+	public void enterWrite_stmt(junkParser.Write_stmtContext ctx) {
+		//Attempting to expand the context parser
+		System.out.println("Expanding Write statement!");
+		System.out.println(ctx.getText());
+		int count = ctx.getChildCount();
+		for (int i = 0; i < count; i++) {
+			System.out.println("Child " + i + ": " + ctx.getChild(i).getText());
+		}
+	}
 }
