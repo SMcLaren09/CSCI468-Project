@@ -75,4 +75,9 @@ public class SymbolTable {
 		return temp;
 	}
 
+	public Symbol searchSymbol(String name) {
+		HashMap<String, Symbol> allSymbols = packageSymbols();
+		return allSymbols.get(name);
+	}
+
 }

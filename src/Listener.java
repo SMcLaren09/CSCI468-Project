@@ -3,6 +3,7 @@ import java.util.*;
 public class Listener extends junkBaseListener {
 
 	SymbolTable s;
+	IRBuilder ir;
 	Symbol symbol;
 	boolean newTable, newTableHeader, programHeader = false;
 	String variableType,
@@ -13,8 +14,8 @@ public class Listener extends junkBaseListener {
 	@Override
 	public void enterProgram(junkParser.ProgramContext ctx) {
 //		System.out.println("enterProgram...");
-
 		s = new SymbolTable(null, null);
+		ir = new IRBuilder(s);
 		s.setName("GLOBAL");
 		programHeader = true;
         }
@@ -22,6 +23,8 @@ public class Listener extends junkBaseListener {
 	@Override
 	public void exitProgram(junkParser.ProgramContext ctx) {
 //		System.out.println("Exiting Program...");
+		ir.endProgram();
+		//callTinyCodeConverter
 		s.printAll();
         }
 
@@ -31,6 +34,8 @@ public class Listener extends junkBaseListener {
 		pushSymbolTable();
 		newTable = true;
        		newTableHeader = true;
+		//todo: allow for multiple function declarations
+		ir.enterMain();
 	}
 
 	@Override
@@ -113,17 +118,34 @@ public class Listener extends junkBaseListener {
 	}
 
 	@Override
+	public void enterCond(junkParser.CondContext ctx) {
+		System.out.println("Condition: " + ctx.getText());
+		int count = ctx.getChildCount();
+		String[] set = new String[count];
+		for (int i = 0; i < count; i++) {
+			set[i] = ctx.getChild(i).getText();
+		}
+		ir.parseComparison(set);
+	}
+
+	@Override
 	public void enterIf_stmt(junkParser.If_stmtContext ctx) {
 //                System.out.println("Enter If stmt");
 		pushSymbolTable();
 	        s.setName("BLOCK " + block);
         	block++;
+		
+		//flag IRBuilder
+		ir.setCondition("if");
 	}
 
 	@Override
 	public void exitIf_stmt(junkParser.If_stmtContext ctx) {
 //              System.out.println("Exit If stmt");
 		popSymbolTable();
+		
+		//flag IRBuilder
+		ir.setCondition(null);
 	}
 
 	@Override
@@ -146,16 +168,22 @@ public class Listener extends junkBaseListener {
 
 	@Override
 	public void enterWhile_stmt(junkParser.While_stmtContext ctx) {
-//              System.out.println("Enter While stmt");
+                //System.out.println("WHILE | " + ctx.getText());
 		pushSymbolTable();
 		s.setName("BLOCK " + block);
 		block++;
+		
+		//flag IRBuilder
+		ir.setCondition("while");
         }
 
 	@Override
 	public void exitWhile_stmt(junkParser.While_stmtContext ctx) {
 //		System.out.println("Exit While stmt");
 		popSymbolTable();
+		ir.endWhile();
+		//flag IRBuilder
+		ir.setCondition(null);
 	}
 
 	public SymbolTable getSymbolTable() {
@@ -164,12 +192,14 @@ public class Listener extends junkBaseListener {
 
 	public void popSymbolTable() {
 		s = s.getParent();
+		ir.updateTable(s);
 	}
 
 	public void pushSymbolTable() {
 		//SymbolTable newTable = new SymbolTable(s, s.getScopedVariables());
 		//s = newTable;
 		s = s.createChild();
+		ir.updateTable(s);
 	}
 
 	@Override
@@ -177,9 +207,20 @@ public class Listener extends junkBaseListener {
 		//Attempting to expand the context parser
 		System.out.println("Expanding Write statement!");
 		System.out.println(ctx.getText());
-		int count = ctx.getChildCount();
-		for (int i = 0; i < count; i++) {
-			System.out.println("Child " + i + ": " + ctx.getChild(i).getText());
-		}
+		//int count = ctx.getChildCount();
+		//list: | WRITE | ( | param1,param2,... | ) | ; |
+		String[] params = ctx.getChild(2).getText().split(",");
+		ir.buildWrite(params);
+	}
+
+	@Override
+	public void enterRead_stmt(junkParser.Read_stmtContext ctx) {
+		//Attempting to expand the context parser
+		System.out.println("Expanding Read statement!");
+		System.out.println(ctx.getText());
+		//int count = ctx.getChildCount();
+		//list: | READ | ( | param1,param2,... | ) | ; |
+		String[] params = ctx.getChild(2).getText().split(",");
+		ir.buildRead(params);
 	}
 }
