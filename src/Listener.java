@@ -118,6 +118,36 @@ public class Listener extends junkBaseListener {
 	}
 
 	@Override
+	public void enterAssign_expr(junkParser.Assign_exprContext ctx) {
+		System.out.println("Assignment Expression:");
+		int count = ctx.getChildCount();
+		for (int i = 0; i < count; i++) {
+			System.out.println("Child " + i + ": " + ctx.getChild(i).getText());
+		}
+	}
+	@Override
+	public void enterExpr(junkParser.ExprContext ctx) {
+		System.out.println("Expression Part Uno:");
+		System.out.println("Child factor: " + ctx.getChild(1).getText());
+	}
+	@Override
+	public void enterFactor(junkParser.FactorContext ctx) {
+		System.out.println("Factor Part Uno:");
+		int count = ctx.getChildCount();
+		for (int i = 0; i < count; i++) {
+			System.out.println("Child " + i + ": " + ctx.getChild(i).getText());
+		}
+	}
+	@Override
+	public void enterAddop(junkParser.AddopContext ctx) {
+		System.out.println("Addop Part Uno:");
+		int count = ctx.getChildCount();
+		for (int i = 0; i < count; i++) {
+			System.out.println("Child " + i + ": " + ctx.getChild(i).getText());
+		}
+	}
+
+	@Override
 	public void enterCond(junkParser.CondContext ctx) {
 		//System.out.println("Condition: " + ctx.getText());
 		int count = ctx.getChildCount();
@@ -187,22 +217,6 @@ public class Listener extends junkBaseListener {
 		ir.setCondition(null);
 	}
 
-	public SymbolTable getSymbolTable() {
-		return s;
-	}
-
-	public void popSymbolTable() {
-		s = s.getParent();
-		ir.updateTable(s);
-	}
-
-	public void pushSymbolTable() {
-		//SymbolTable newTable = new SymbolTable(s, s.getScopedVariables());
-		//s = newTable;
-		s = s.createChild();
-		ir.updateTable(s);
-	}
-
 	@Override
 	public void enterWrite_stmt(junkParser.Write_stmtContext ctx) {
 		//Attempting to expand the context parser
@@ -223,6 +237,24 @@ public class Listener extends junkBaseListener {
 		//list: | READ | ( | param1,param2,... | ) | ; |
 		String[] params = ctx.getChild(2).getText().split(",");
 		ir.buildRead(params);
+	}
+
+
+
+	public SymbolTable getSymbolTable() {
+		return s;
+	}
+
+	public void popSymbolTable() {
+		s = s.getParent();
+		ir.updateTable(s);
+	}
+
+	public void pushSymbolTable() {
+		//SymbolTable newTable = new SymbolTable(s, s.getScopedVariables());
+		//s = newTable;
+		s = s.createChild();
+		ir.updateTable(s);
 	}
 }
 
