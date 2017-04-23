@@ -130,7 +130,7 @@ public class Listener extends junkBaseListener {
 
 	@Override
 	public void enterIf_stmt(junkParser.If_stmtContext ctx) {
-//                System.out.println("Enter If stmt");
+                System.out.println("Enter If stmt");
 		pushSymbolTable();
 	        s.setName("BLOCK " + block);
         	block++;
@@ -141,22 +141,23 @@ public class Listener extends junkBaseListener {
 
 	@Override
 	public void exitIf_stmt(junkParser.If_stmtContext ctx) {
-//              System.out.println("Exit If stmt");
+                System.out.println("Exit If stmt");
 		popSymbolTable();
-		
+		ir.exitIf();
 		//flag IRBuilder
 		ir.setCondition(null);
 	}
 
 	@Override
 	public void enterElse_part(junkParser.Else_partContext ctx) {
-//              System.out.println("Enter Else stmt");
+                System.out.println("Enter Else stmt");
 		//get out of if  block and enter else block
         	if (ctx.getChildCount() > 0) {
 			popSymbolTable();
         		pushSymbolTable();
         		s.setName("BLOCK " + block);
 	        	block++;
+			ir.enterElsePart();
         		//use exitIf() to pop back to parent symbolTable
 		}
 	}
@@ -224,3 +225,10 @@ public class Listener extends junkBaseListener {
 		ir.buildRead(params);
 	}
 }
+
+
+//
+//		int count = ctx.getChildCount();
+//		for (int i = 0; i < count; i++) {
+//			System.out.println(ctx.getChild(i).getText());
+//		}

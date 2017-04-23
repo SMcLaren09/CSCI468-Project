@@ -66,7 +66,7 @@ public class IRBuilder {
 		if (isNumber(set[2])) {
 			System.out.println("NUMBER!!!");
 			//check if it floats
-			dataType = set[0].contains(".") ? 'F' : 'I';
+			dataType = set[2].contains(".") ? 'F' : 'I';
 		} else { //get the data type from the variable
 			System.out.println("VARIABLE!!!");
 			dataType = currentTable.searchSymbol(set[0]).getType().toUpperCase().toCharArray()[0];
@@ -136,6 +136,7 @@ public class IRBuilder {
 		// LABEL label#
 		// [store immediate to register] (regNum++)
 		// [evaluate condition with jump to label#++]
+		// TODO: Fix condition issue of condition op being an expression
 		System.out.println("Building While...\nLABEL label" + labelNum);
 		ir_list.add("LABEL label" + labelNum++);
 		if (isNumber(op1)) {
@@ -170,17 +171,40 @@ public class IRBuilder {
 		// IRCode to be built:
 		// [store immediate to register] (regNum++)
 		// [evaluate condition with jump to label#]
-		System.out.println("Building If...");
+		System.out.println("Building If Header...");
+		if (isNumber(op1)) {
+			System.out.println("STORE" + dataType + " " + op1 + " " + (op1 = "$T" + regNum));
+			ir_list.add("STORE" + dataType + " " + op1 + " " + (op1 = "$T" + regNum++));
+		}
+		if (isNumber(op2)) {
+			System.out.println("STORE" + dataType + " " + op2 + " " + (op2 = "$T" + regNum));
+			ir_list.add("STORE" + dataType + " " + op2 + " " + (op2 = "$T" + regNum++));
+		}
+		// Add comparison instruction and push labelNum to stack
+		labelStack.add(0,"label" + labelNum);
+		System.out.println(compIR + " " + op1 + " " + op2 + " label" + (labelNum));
+		ir_list.add(compIR + " " + op1 + " " + op2 + " label" + labelNum++);
+		System.out.println("Next regNum: " + regNum + "\nNext labelNum: " + labelNum);
 	}
 
 	public void enterElsePart() { //weird shit happens with these if statements........
 		// IRCode to be built(if needed):
 		// JUMP label#
 		// LABEL label#
+		String elseLabel = labelStack.remove(0);
+		labelStack.add(0, "label" + labelNum);
+		System.out.println("JUMP label" + labelNum);
+		ir_list.add("JUMP label" + labelNum++);
+		System.out.println("LABEL " + elseLabel);
+		ir_list.add("LABEL " + elseLabel);		
+		
 	}
 	public void exitIf() {
 		// IRCode to be built:
 		// LABEL label#
+		String elseLabel = labelStack.remove(0);
+		System.out.println("LABEL " + elseLabel);
+		ir_list.add("LABEL " + elseLabel);
 	}
 		
 		
