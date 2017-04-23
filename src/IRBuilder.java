@@ -41,7 +41,7 @@ public class IRBuilder {
 	public void buildWrite(String[] params) {
 		//Structure: list1,list2,list3,etc
 		char type;
-		System.out.println("Building Write");
+		//System.out.println("Building Write");
 		for (String param : params) {
 			type = currentTable.searchSymbol(param).getType().toUpperCase().toCharArray()[0];
 			ir_list.add("WRITE" + type + " " + param);
@@ -52,7 +52,7 @@ public class IRBuilder {
 	public void buildRead(String[] params) {
 		//Structure: list1,list2,list3,etc
 		char type;
-		System.out.println("Building Read");
+		//System.out.println("Building Read");
 		for (String param : params) {
 			type = currentTable.searchSymbol(param).getType().toUpperCase().toCharArray()[0];
 			ir_list.add("READ" + type + " " + param);
@@ -64,11 +64,11 @@ public class IRBuilder {
 	public void parseComparison(String[] set) {
 		// Scanning op2 as it is more likely to be a literal and therefore faster to determine
 		if (isNumber(set[2])) {
-			System.out.println("NUMBER!!!");
+			//System.out.println("NUMBER!!!");
 			//check if it floats
 			dataType = set[2].contains(".") ? 'F' : 'I';
 		} else { //get the data type from the variable
-			System.out.println("VARIABLE!!!");
+			//System.out.println("VARIABLE!!!");
 			dataType = currentTable.searchSymbol(set[0]).getType().toUpperCase().toCharArray()[0];
 		}
 		//same steps for set[2]
@@ -137,7 +137,7 @@ public class IRBuilder {
 		// [store immediate to register] (regNum++)
 		// [evaluate condition with jump to label#++]
 		// TODO: Fix condition issue of condition op being an expression
-		System.out.println("Building While...\nLABEL label" + labelNum);
+		//System.out.println("Building While...\nLABEL label" + labelNum);
 		ir_list.add("LABEL label" + labelNum++);
 		if (isNumber(op1)) {
 			System.out.println("STORE" + dataType + " " + op1 + " " + (op1 = "$T" + regNum));
@@ -152,7 +152,7 @@ public class IRBuilder {
 		labelStack.add(0,"label" + (labelNum - 1));
 		System.out.println(compIR + " " + op1 + " " + op2 + " label" + (labelNum));
 		ir_list.add(compIR + " " + op1 + " " + op2 + " label" + labelNum++);
-		System.out.println("Next regNum: " + regNum + "\nNext labelNum: " + labelNum);
+		//System.out.println("Next regNum: " + regNum + "\nNext labelNum: " + labelNum);
 
 	}
 	public void endWhile() {
@@ -171,7 +171,7 @@ public class IRBuilder {
 		// IRCode to be built:
 		// [store immediate to register] (regNum++)
 		// [evaluate condition with jump to label#]
-		System.out.println("Building If Header...");
+		//System.out.println("Building If Header...");
 		if (isNumber(op1)) {
 			System.out.println("STORE" + dataType + " " + op1 + " " + (op1 = "$T" + regNum));
 			ir_list.add("STORE" + dataType + " " + op1 + " " + (op1 = "$T" + regNum++));
@@ -184,7 +184,7 @@ public class IRBuilder {
 		labelStack.add(0,"label" + labelNum);
 		System.out.println(compIR + " " + op1 + " " + op2 + " label" + (labelNum));
 		ir_list.add(compIR + " " + op1 + " " + op2 + " label" + labelNum++);
-		System.out.println("Next regNum: " + regNum + "\nNext labelNum: " + labelNum);
+		//System.out.println("Next regNum: " + regNum + "\nNext labelNum: " + labelNum);
 	}
 
 	public void enterElsePart() { //weird shit happens with these if statements........

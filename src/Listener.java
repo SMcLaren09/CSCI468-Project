@@ -25,7 +25,7 @@ public class Listener extends junkBaseListener {
 //		System.out.println("Exiting Program...");
 		ir.endProgram();
 		//callTinyCodeConverter
-		s.printAll();
+		//s.printAll();
         }
 
 	@Override
@@ -119,7 +119,7 @@ public class Listener extends junkBaseListener {
 
 	@Override
 	public void enterCond(junkParser.CondContext ctx) {
-		System.out.println("Condition: " + ctx.getText());
+		//System.out.println("Condition: " + ctx.getText());
 		int count = ctx.getChildCount();
 		String[] set = new String[count];
 		for (int i = 0; i < count; i++) {
@@ -130,7 +130,7 @@ public class Listener extends junkBaseListener {
 
 	@Override
 	public void enterIf_stmt(junkParser.If_stmtContext ctx) {
-                System.out.println("Enter If stmt");
+                //System.out.println("Enter If stmt");
 		pushSymbolTable();
 	        s.setName("BLOCK " + block);
         	block++;
@@ -141,7 +141,7 @@ public class Listener extends junkBaseListener {
 
 	@Override
 	public void exitIf_stmt(junkParser.If_stmtContext ctx) {
-                System.out.println("Exit If stmt");
+                //System.out.println("Exit If stmt");
 		popSymbolTable();
 		ir.exitIf();
 		//flag IRBuilder
@@ -150,7 +150,7 @@ public class Listener extends junkBaseListener {
 
 	@Override
 	public void enterElse_part(junkParser.Else_partContext ctx) {
-                System.out.println("Enter Else stmt");
+                //System.out.println("Enter Else stmt");
 		//get out of if  block and enter else block
         	if (ctx.getChildCount() > 0) {
 			popSymbolTable();
@@ -206,8 +206,8 @@ public class Listener extends junkBaseListener {
 	@Override
 	public void enterWrite_stmt(junkParser.Write_stmtContext ctx) {
 		//Attempting to expand the context parser
-		System.out.println("Expanding Write statement!");
-		System.out.println(ctx.getText());
+		//System.out.println("Expanding Write statement!");
+		//System.out.println(ctx.getText());
 		//int count = ctx.getChildCount();
 		//list: | WRITE | ( | param1,param2,... | ) | ; |
 		String[] params = ctx.getChild(2).getText().split(",");
@@ -217,8 +217,8 @@ public class Listener extends junkBaseListener {
 	@Override
 	public void enterRead_stmt(junkParser.Read_stmtContext ctx) {
 		//Attempting to expand the context parser
-		System.out.println("Expanding Read statement!");
-		System.out.println(ctx.getText());
+		//System.out.println("Expanding Read statement!");
+		//System.out.println(ctx.getText());
 		//int count = ctx.getChildCount();
 		//list: | READ | ( | param1,param2,... | ) | ; |
 		String[] params = ctx.getChild(2).getText().split(",");
