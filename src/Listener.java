@@ -119,32 +119,60 @@ public class Listener extends junkBaseListener {
 
 	@Override
 	public void enterAssign_expr(junkParser.Assign_exprContext ctx) {
-		System.out.println("Assignment Expression:");
+		System.out.println("Assignment Expression: " + ctx.getText());
 		int count = ctx.getChildCount();
-		for (int i = 0; i < count; i++) {
-			System.out.println("Child " + i + ": " + ctx.getChild(i).getText());
-		}
+		//for (int i = 0; i < count; i++) {
+		//	System.out.println("Child " + i + ": " + ctx.getChild(i).getText());
+		//}
 	}
 	@Override
 	public void enterExpr(junkParser.ExprContext ctx) {
-		System.out.println("Expression Part Uno:");
-		System.out.println("Child factor: " + ctx.getChild(1).getText());
+		System.out.println("Expression: " + ctx.getText());
+	}
+	@Override
+	public void exitExpr(junkParser.ExprContext ctx) {
+		System.out.println("Exit Expression");
+	}
+	@Override
+	public void enterExpr_prefix(junkParser.Expr_prefixContext ctx) 
+	{
+		//System.out.println("Expression Prefix: " + ctx.getText());
 	}
 	@Override
 	public void enterFactor(junkParser.FactorContext ctx) {
-		System.out.println("Factor Part Uno:");
+		//System.out.println("Factor: " + ctx.getText());
 		int count = ctx.getChildCount();
-		for (int i = 0; i < count; i++) {
-			System.out.println("Child " + i + ": " + ctx.getChild(i).getText());
-		}
+		//for (int i = 0; i < count; i++) {
+		//	System.out.println("Child " + i + ": " + ctx.getChild(i).getText());
+		//}
+	}
+	@Override
+	public void enterPostfix_expr(junkParser.Postfix_exprContext ctx) 
+	{
+		//System.out.println("Postfix: " + ctx.getText());
+	}
+	@Override
+	public void enterPrimary(junkParser.PrimaryContext ctx)
+	{
+		System.out.println("Primary: " + ctx.getText());
 	}
 	@Override
 	public void enterAddop(junkParser.AddopContext ctx) {
-		System.out.println("Addop Part Uno:");
-		int count = ctx.getChildCount();
-		for (int i = 0; i < count; i++) {
-			System.out.println("Child " + i + ": " + ctx.getChild(i).getText());
-		}
+		System.out.println("Addop: " + ctx.getText());
+		//int count = ctx.getChildCount();
+		//for (int i = 0; i < count; i++) {
+		//	System.out.println("Child " + i + ": " + ctx.getChild(i).getText());
+		//}
+	}
+	@Override
+	public void enterMulop(junkParser.MulopContext ctx) 
+	{
+		System.out.println("Mulop: " + ctx.getText());
+	}
+	@Override
+	public void exitAssign_expr(junkParser.Assign_exprContext ctx) 
+	{
+		System.out.println("---------------------------------\n");
 	}
 
 	@Override
