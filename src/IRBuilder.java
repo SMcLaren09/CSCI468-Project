@@ -11,6 +11,11 @@ public class IRBuilder {
 	private char dataType;
 	private SymbolTable currentTable;
 
+	// Expression Builder
+	private ArrayList<String> expression;
+	private ArrayList<String> stack;
+	private ArrayList<String> postfixOutput;
+
 	public IRBuilder(SymbolTable currentTable) {
 		//Will need to add functionality later when it is determined what that is
 		ir_list = new ArrayList<>();
@@ -18,6 +23,9 @@ public class IRBuilder {
 		regNum = 1;
 		this.currentTable = currentTable;
 		labelStack = new ArrayList<>();
+		stack = new ArrayList<>();
+		postfixOutput = new ArrayList<>();
+		expression = new ArrayList<>();
 	}
 
 	public void updateTable(SymbolTable s) {
@@ -207,8 +215,120 @@ public class IRBuilder {
 		ir_list.add("LABEL " + elseLabel);
 	}
 		
+
+	/* Expression Builder Funcitonality 
+	 * Conversion process:
+	 * expression --> postfix notation --> IR code
+	 *  ie. a + b -->     a  b  +      -->  addi a b r1
+	 */
+
+	public void enterExpression() {
+		//expression.add("(");
+
+		stack.add(0,"(");
+	}
+
+	public void exitExpression() {
+		//expression.add(")");
+
+		stack.add(0,")");
+		popPostFixStack(false);
+	}
+
+	public void addElement(String element) {
+		//expression.add(element);
+		postfixOutput.add(element);
+	}
+	public void addOperator(String op) {
+		String prefixOp;
+		switch(op) {
+			case "+":
+			case "-":
+				if (stack.isEmpty()) stack.add(0,op);
+				 else {
+				// nothing is lower precedence than the two pop, push, and build
+				prefixOp = stack.remove(0);
+				stack.add(0,op);
+				prefixOutput.add(prefixOp);
+				}
+				break;
+			case "*":
+			case "/":
+				//check the top of the stack if same level of heiarchy
+				if (stack.get(0) == "*" || stack.get(0) == "/") {
+					prefixOp = stack.remove(0);
+					stack.add(0,op);
+					prefixOutput.add(prefixOp);
+				} else { // for "+","-", or "("
+					stack.add(0,op);
+				}
+				break;
+			default:
+				System.out.println("Shits broke yo...");
+	}
+	public void expressionToIR() {
+		//convert to postfix
+		toPostfix();
+	}
+
+	private void toPostfix() {
+	}
+
+	private void popPostFixStack(boolean completely) {
+		if (completely) {
+			while (!stack.isEmpty()) {
+				// don't push parenthesis
+				if (stack.get(0) == "(" || stack.get(0) == ")") continue;
+				// pop and push
+				postfixOutput.add(stack.remove(0));
+			}
+		} else {
+			stack.remove(0); //remove ')' tag
+			while (stack.get(0) != "(") {
+				postfixOutput.add(stack.remove(0);
+			}
+			stack.remove(0); //remove "(" tag
+		}
+	}
+
+	// Converts postfixOutput array values into IR code
+	public void exprToIR() {
+		// repurposing stack to work with IR building
+		stack.clear(); //superfluous action. should already be empty
+		String a;
+		String b;
+		for (String el : postfixOutput) {
+			if (el == "+" || el == "-" || el == "*" || el == "/") {
+				b = stack.remove(0);
+				a = stack.remove(0);
+				switch (el) {
+					case "+":
+						System.out.printf("ADD%c %s %s r%d\n",dataType,a,b,regNum);
+						stack.add(0,"r"+regNum);
+						ir_list.add(String.format("ADD%c %s %s r%d",dataType,a,b,regNum++);
+						break;
+					case "-":
+						System.out.printf("SUB%c %s %s r%d\n",dataType,a,b,regNum);
+						stack.add(0,"r"+regNum);
+						ir_list.add(String.format("SUB%c %s %s r%d",dataType,a,b,regNum++);
+						break;
+					case "*":
+						System.out.printf("MUL%c %s %s r%d\n",dataType,a,b,regNum);
+						stack.add(0,"r"+regNum);
+						ir_list.add(String.format("MUL%c %s %s r%d",dataType,a,b,regNum++);
+						break;
+					case "/":
+						System.out.printf("DIV%c %s %s r%d\n",dataType,a,b,regNum);
+						stack.add(0,"r"+regNum);
+						ir_list.add(String.format("DIV%c %s %s r%d",dataType,a,b,regNum++);
+						break;
+					default:
+						System.out.println("Shits broke yo...");
+				}
+			} else {
+				stack.add(0, el);
+			}
+		}
+	}
 		
-
-
-
 }
