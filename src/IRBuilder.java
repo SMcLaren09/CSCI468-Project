@@ -15,6 +15,7 @@ public class IRBuilder {
 	private ArrayList<String> expression;
 	private ArrayList<String> stack;
 	private ArrayList<String> postfixOutput;
+	private boolean inExpression = false;
 
 	public IRBuilder(SymbolTable currentTable) {
 		//Will need to add functionality later when it is determined what that is
@@ -224,7 +225,7 @@ public class IRBuilder {
 
 	public void enterExpression() {
 		//expression.add("(");
-
+		inExpression = true;
 		stack.add(0,"(");
 	}
 
@@ -236,11 +237,13 @@ public class IRBuilder {
 	}
 
 	public void addElement(String element) {
+		if (!inExpression) return;
 		//expression.add(element);
 		postfixOutput.add(element);
-                printPostfix();
+                //printPostfix();
 	}
 	public void addOperator(String op) {
+		if (!inExpression) return;
 		String postfixOp;
 		switch(op) {
 			case "+":
@@ -267,7 +270,7 @@ public class IRBuilder {
 			default:
 				System.out.println("Shits broke yo...");
                 }
-                printPostfix();
+                //printPostfix();
 	}
 	public void expressionToIR() {
 		//convert to postfix
@@ -295,6 +298,9 @@ public class IRBuilder {
 
 	private void popPostFixStack(boolean completely) {
 		if (completely) {
+			if (postfixOutput.size() == 1) {}
+			else {
+			inExpression = false;
 			while (!stack.isEmpty()) {
 				// don't push parenthesis
 				if (stack.get(0) == "(" || stack.get(0) == ")") {
@@ -303,9 +309,13 @@ public class IRBuilder {
                                 }
 				// pop and push
 				postfixOutput.add(stack.remove(0));
-                                printPostfix();
+                                //printPostfix();
 			}
+			//System.out.println("Converting to IR...");
                         exprToIR();
+			}
+			stack.clear();
+			postfixOutput.clear();
 		} else {
 			stack.remove(0); //remove ")" tag
 			while (stack.get(0) != "(") {
@@ -316,13 +326,13 @@ public class IRBuilder {
 	}
 
 	// Converts postfixOutput array values into IR code
-	public void exprToIR() {
+	private void exprToIR() {
 		// repurposing stack to work with IR building
 		stack.clear(); //superfluous action. should already be empty
 		String a;
 		String b;
 		for (String el : postfixOutput) {
-			if (el == "+" || el == "-" || el == "*" || el == "/") {
+			if (el.equals("+") || el.equals("-") || el.equals("*") || el.equals("/")) {
 				b = stack.remove(0);
 				a = stack.remove(0);
 				switch (el) {

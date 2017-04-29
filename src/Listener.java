@@ -10,6 +10,7 @@ public class Listener extends junkBaseListener {
 	       variableValue;
 	ArrayList<String> variableName = new ArrayList<>();
 	int block = 1;
+	int expressionCeption = 0; // when dealing with nested expressions
 
 	@Override
 	public void enterProgram(junkParser.ProgramContext ctx) {
@@ -128,10 +129,16 @@ public class Listener extends junkBaseListener {
 	@Override
 	public void enterExpr(junkParser.ExprContext ctx) {
 		System.out.println("Expression: " + ctx.getText());
+		ir.enterExpression();
+		expressionCeption++;
 	}
 	@Override
 	public void exitExpr(junkParser.ExprContext ctx) {
 		System.out.println("Exit Expression");
+		if (--expressionCeption == 0) 
+			ir.exitExpression(true);
+		else
+			ir.exitExpression(false);
 	}
 	@Override
 	public void enterExpr_prefix(junkParser.Expr_prefixContext ctx) 
@@ -154,20 +161,20 @@ public class Listener extends junkBaseListener {
 	@Override
 	public void enterPrimary(junkParser.PrimaryContext ctx)
 	{
-		System.out.println("Primary: " + ctx.getText());
+		//System.out.println("Primary: " + ctx.getText());
+		if (ctx.getChildCount() == 1)
+		ir.addElement(ctx.getText());
 	}
 	@Override
 	public void enterAddop(junkParser.AddopContext ctx) {
-		System.out.println("Addop: " + ctx.getText());
-		//int count = ctx.getChildCount();
-		//for (int i = 0; i < count; i++) {
-		//	System.out.println("Child " + i + ": " + ctx.getChild(i).getText());
-		//}
+		//System.out.println("Addop: " + ctx.getText());
+		ir.addOperator(ctx.getText());
 	}
 	@Override
 	public void enterMulop(junkParser.MulopContext ctx) 
 	{
-		System.out.println("Mulop: " + ctx.getText());
+		//System.out.println("Mulop: " + ctx.getText());
+		ir.addOperator(ctx.getText());
 	}
 	@Override
 	public void exitAssign_expr(junkParser.Assign_exprContext ctx) 
