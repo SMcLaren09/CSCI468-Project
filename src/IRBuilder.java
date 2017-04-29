@@ -228,43 +228,46 @@ public class IRBuilder {
 		stack.add(0,"(");
 	}
 
-	public void exitExpression() {
+	public void exitExpression(boolean end) {
 		//expression.add(")");
 
 		stack.add(0,")");
-		popPostFixStack(false);
+		popPostFixStack(end);
 	}
 
 	public void addElement(String element) {
 		//expression.add(element);
 		postfixOutput.add(element);
+                printPostfix();
 	}
 	public void addOperator(String op) {
-		String prefixOp;
+		String postfixOp;
 		switch(op) {
 			case "+":
 			case "-":
-				if (stack.isEmpty()) stack.add(0,op);
-				 else {
+				if (stack.isEmpty() || stack.get(0) == "(") stack.add(0,op);
+				else {
 				// nothing is lower precedence than the two pop, push, and build
-				prefixOp = stack.remove(0);
-				stack.add(0,op);
-				prefixOutput.add(prefixOp);
+				postfixOp = stack.remove(0);
+				postfixOutput.add(postfixOp);
+				addOperator(op); //oh boy...
 				}
 				break;
 			case "*":
 			case "/":
 				//check the top of the stack if same level of heiarchy
 				if (stack.get(0) == "*" || stack.get(0) == "/") {
-					prefixOp = stack.remove(0);
-					stack.add(0,op);
-					prefixOutput.add(prefixOp);
+					postfixOp = stack.remove(0);
+					postfixOutput.add(postfixOp);
+                                        addOperator(op); //oh boy...
 				} else { // for "+","-", or "("
 					stack.add(0,op);
 				}
 				break;
 			default:
 				System.out.println("Shits broke yo...");
+                }
+                printPostfix();
 	}
 	public void expressionToIR() {
 		//convert to postfix
@@ -273,19 +276,40 @@ public class IRBuilder {
 
 	private void toPostfix() {
 	}
+        
+        public void printPostfix() {
+               System.out.print("Stack = ");
+               String stacky = "";
+               //reverse the appearance of the stack for readability
+               for (String el : stack) {
+                   stacky = el + " " + stacky;
+               }
+               System.out.println(stacky);
+               
+               System.out.print("Output = ");
+               for (String el : postfixOutput) {
+                   System.out.print(el + " ");
+               }
+               System.out.println();
+        }
 
 	private void popPostFixStack(boolean completely) {
 		if (completely) {
 			while (!stack.isEmpty()) {
 				// don't push parenthesis
-				if (stack.get(0) == "(" || stack.get(0) == ")") continue;
+				if (stack.get(0) == "(" || stack.get(0) == ")") {
+                                    stack.remove(0);
+                                    continue;
+                                }
 				// pop and push
 				postfixOutput.add(stack.remove(0));
+                                printPostfix();
 			}
+                        exprToIR();
 		} else {
-			stack.remove(0); //remove ')' tag
+			stack.remove(0); //remove ")" tag
 			while (stack.get(0) != "(") {
-				postfixOutput.add(stack.remove(0);
+				postfixOutput.add(stack.remove(0));
 			}
 			stack.remove(0); //remove "(" tag
 		}
@@ -305,22 +329,22 @@ public class IRBuilder {
 					case "+":
 						System.out.printf("ADD%c %s %s r%d\n",dataType,a,b,regNum);
 						stack.add(0,"r"+regNum);
-						ir_list.add(String.format("ADD%c %s %s r%d",dataType,a,b,regNum++);
+						ir_list.add(String.format("ADD%c %s %s r%d",dataType,a,b,regNum++));
 						break;
 					case "-":
 						System.out.printf("SUB%c %s %s r%d\n",dataType,a,b,regNum);
 						stack.add(0,"r"+regNum);
-						ir_list.add(String.format("SUB%c %s %s r%d",dataType,a,b,regNum++);
+						ir_list.add(String.format("SUB%c %s %s r%d",dataType,a,b,regNum++));
 						break;
 					case "*":
 						System.out.printf("MUL%c %s %s r%d\n",dataType,a,b,regNum);
 						stack.add(0,"r"+regNum);
-						ir_list.add(String.format("MUL%c %s %s r%d",dataType,a,b,regNum++);
+						ir_list.add(String.format("MUL%c %s %s r%d",dataType,a,b,regNum++));
 						break;
 					case "/":
 						System.out.printf("DIV%c %s %s r%d\n",dataType,a,b,regNum);
 						stack.add(0,"r"+regNum);
-						ir_list.add(String.format("DIV%c %s %s r%d",dataType,a,b,regNum++);
+						ir_list.add(String.format("DIV%c %s %s r%d",dataType,a,b,regNum++));
 						break;
 					default:
 						System.out.println("Shits broke yo...");
@@ -329,6 +353,5 @@ public class IRBuilder {
 				stack.add(0, el);
 			}
 		}
-	}
-		
+	}		
 }
