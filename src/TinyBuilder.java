@@ -85,9 +85,12 @@ public class TinyBuilder {
 		tiny.add(String.format("move %s %s",ops[1],ops[2]));
 	}
 
+	// COMP[T] op1 op2 label#
 	private void parseComp(String code) {
 		String[] ops = code.split(" ");
-		tiny.add(code);
+		String compop = "j" + ((String)ops[0].subSequence(0,ops[0].length() - 1)).toLowerCase();
+		tiny.add(String.format("cmp%c %s %s",dataType,ops[1],ops[2]));
+		tiny.add(String.format("%s %s",compop,ops[3]));
 	}
 
 	// ADD[T] r1 r2 r3
