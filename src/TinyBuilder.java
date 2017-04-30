@@ -35,7 +35,7 @@ public class TinyBuilder {
 		for (String opcode : ir_list) {
 			checkForVariable(opcode);
 			String[] ops = opcode.split(" ");
-			char dataType = ops[0].toLowerCase().charAt(ops[0].length() - 1);
+			dataType = ops[0].toLowerCase().charAt(ops[0].length() - 1);
 			dataType = dataType == 'f' ? 'r' : dataType;
 
 			//route instruction
@@ -43,7 +43,7 @@ public class TinyBuilder {
 			else if (opcode.contains("STORE")) parseStore(opcode);
 			else if (opcode.contains("ADD")) parseAdd(opcode);
 			else if (opcode.contains("SUB")) parseSub(opcode);
-			else if (opcode.contains("MULT")) parseMul(opcode);
+			else if (opcode.contains("MUL")) parseMul(opcode);
 			else if (opcode.contains("DIV")) parseDiv(opcode);
 			else if (opcode.contains("JUMP")) parseJump(opcode);
 			else if (opcode.contains("LINK")) {}
@@ -87,6 +87,7 @@ public class TinyBuilder {
 
 	private void parseComp(String code) {
 		String[] ops = code.split(" ");
+		tiny.add(code);
 	}
 
 	// ADD[T] r1 r2 r3
