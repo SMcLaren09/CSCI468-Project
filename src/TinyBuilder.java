@@ -34,6 +34,7 @@ public class TinyBuilder {
 		//let the parsing games begin...
 		for (String opcode : ir_list) {
 			checkForVariable(opcode);
+			opcode = opcode.replace("$T","r");
 			String[] ops = opcode.split(" ");
 			dataType = ops[0].toLowerCase().charAt(ops[0].length() - 1);
 			dataType = dataType == 'f' ? 'r' : dataType;
@@ -65,11 +66,13 @@ public class TinyBuilder {
 	}
 	private void foundVariable(Symbol var) {
 		String variable = var.getName();
+		String type = "var";
 		vars.add(variable);
 		if (var.getType().equals("STRING")) {
 			variable += String.format(" %s",var.getValue());
+			type = "str";
 		}
-		tiny.add(0,String.format("var %s",variable));
+		tiny.add(0,String.format("%s %s",type,variable));
 	}
 
 	// LABEL [label]
@@ -80,6 +83,7 @@ public class TinyBuilder {
 
 	// STORE[T] op1 op2
 	private void parseStore(String code) {
+		code = code.replace("$T","r");
 		String[] ops = code.split(" ");
 		//we'll see if we need to deal with variable checking...
 		tiny.add(String.format("move %s %s",ops[1],ops[2]));
@@ -87,6 +91,7 @@ public class TinyBuilder {
 
 	// COMP[T] op1 op2 label#
 	private void parseComp(String code) {
+		code = code.replace("$T","r");
 		String[] ops = code.split(" ");
 		String compop = "j" + ((String)ops[0].subSequence(0,ops[0].length() - 1)).toLowerCase();
 		tiny.add(String.format("cmp%c %s %s",dataType,ops[1],ops[2]));
