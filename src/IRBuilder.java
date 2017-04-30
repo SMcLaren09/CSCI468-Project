@@ -41,8 +41,28 @@ public class IRBuilder {
 		postfixOutput.clear();
 	}
 
+	//remove '(' and ')' from stack along with variables
+	private void trimStack() {
+		ArrayList<String> to_trim = new ArrayList<>(Arrays.asList("(",")"));
+		//for (String el : stack) {
+			//if (currentTable.searchSymbol(el) != null) 
+				//to_trim.add(el);
+		//}
+		stack.removeAll(to_trim);
+	}
+	private void printList(ArrayList<String> list) {
+		for (String el : list) {
+			System.out.print(el + " ");
+		}
+		System.out.println();
+	}
+
 	private boolean isNumber(String numberMaybe) {
 		return numberMaybe.matches("-?\\d*\\.?\\d+");
+	}
+
+	private boolean isRegister(String numberMaybe) {
+		return numberMaybe.matches("r\\d+");
 	}
 
 	public void enterMain() {
@@ -85,13 +105,24 @@ public class IRBuilder {
 		} else { //get the data type from the variable
 			dataType = currentTable.searchSymbol(set[0]).getType().toUpperCase().toCharArray()[0];
 		}
-		//same steps for set[2]
-		//if (isNumber(set[2])) dataType = set[2].contains(".") ? 'F' : 'I';
-		//else dataType = currentTable.searchSymbol(set[2]).getType().toUpperCase().toCharArray()[0];
 
+		// convert ops if expression evident
+		String op1 = elementToIR(set[0]);
+		String op2 = elementToIR(set[2]);
+		//checking if op1 or op2 was an expr ? change ops to what's left on stack : do nothing
+		trimStack();
+		//printList(stack);
+		if (!isNumber(op1) && !isRegister(op1) && currentTable.searchSymbol(op1) == null) {
+			//System.out.println("expr!!! " + stack.get(0));
+			op1 = stack.get(0);
+		}
+		if (!isNumber(op2) && !isRegister(op2) && currentTable.searchSymbol(op2) == null) {
+			//System.out.println("expr!!! " + stack.get(1 % stack.size()));
+			op2 = stack.get(1 % stack.size());
+		}
 		//set compop after dataType is found
 		setCompop(set[1]);
-		routeCondition(elementToIR(set[0]), elementToIR(set[2]));
+		routeCondition(op1, op2);
 	}
 
 
@@ -102,15 +133,6 @@ public class IRBuilder {
 
 	// call appropriate condition statement
 	public void routeCondition(String op1, String op2) throws NullPointerException {
-		//checking if op1 or op2 was an expr ? change ops to what's left on stack : do nothing
-		if (!isNumber(op1) && currentTable.searchSymbol(op1) == null) {
-			System.out.println("expr!!! " + stack.get(0));
-			op1 = stack.get(0);
-		}
-		if (!isNumber(op2) && currentTable.searchSymbol(op2) == null) {
-			System.out.println("expr!!! " + stack.get(1));
-			op2 = stack.get(1);
-		}
 
 		//Determining which complex statement is executed in order to route the call
 		if (condition == null) 
