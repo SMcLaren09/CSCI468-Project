@@ -378,9 +378,9 @@ public class IRBuilder {
 	private String elementToIR(String el) {		
 		if (isNumber(el)) {
 			dataType = el.contains(".") ? 'F' : 'I';
-			System.out.printf("STORE%c %s r%d\n",dataType,el,regNum);
-			ir_list.add(String.format("STORE%c %s r%d",dataType,el,regNum++));
-			el = "r" + (regNum-1);
+			System.out.printf("STORE%c %s $T%d\n",dataType,el,regNum);
+			ir_list.add(String.format("STORE%c %s $T%d",dataType,el,regNum++));
+			el = "$T" + (regNum-1);
 		}
 		return el;
 	}
@@ -406,24 +406,24 @@ public class IRBuilder {
 				a = elementToIR(stack.remove(0));
 				switch (el) {
 					case "+":
-						System.out.printf("ADD%c %s %s r%d\n",dataType,a,b,regNum);
-						stack.add(0,"r"+regNum);
-						ir_list.add(String.format("ADD%c %s %s r%d",dataType,a,b,regNum++));
+						System.out.printf("ADD%c %s %s $T%d\n",dataType,a,b,regNum);
+						stack.add(0,"$T"+regNum);
+						ir_list.add(String.format("ADD%c %s %s $T%d",dataType,a,b,regNum++));
 						break;
 					case "-":
-						System.out.printf("SUB%c %s %s r%d\n",dataType,a,b,regNum);
-						stack.add(0,"r"+regNum);
-						ir_list.add(String.format("SUB%c %s %s r%d",dataType,a,b,regNum++));
+						System.out.printf("SUB%c %s %s $T%d\n",dataType,a,b,regNum);
+						stack.add(0,"$T"+regNum);
+						ir_list.add(String.format("SUB%c %s %s $T%d",dataType,a,b,regNum++));
 						break;
 					case "*":
-						System.out.printf("MUL%c %s %s r%d\n",dataType,a,b,regNum);
-						stack.add(0,"r"+regNum);
-						ir_list.add(String.format("MUL%c %s %s r%d",dataType,a,b,regNum++));
+						System.out.printf("MUL%c %s %s $T%d\n",dataType,a,b,regNum);
+						stack.add(0,"$T"+regNum);
+						ir_list.add(String.format("MUL%c %s %s $T%d",dataType,a,b,regNum++));
 						break;
 					case "/":
-						System.out.printf("DIV%c %s %s r%d\n",dataType,a,b,regNum);
-						stack.add(0,"r"+regNum);
-						ir_list.add(String.format("DIV%c %s %s r%d",dataType,a,b,regNum++));
+						System.out.printf("DIV%c %s %s $T%d\n",dataType,a,b,regNum);
+						stack.add(0,"$T"+regNum);
+						ir_list.add(String.format("DIV%c %s %s $T%d",dataType,a,b,regNum++));
 						break;
 					default:
 						System.out.println("Shits broke yo...");
