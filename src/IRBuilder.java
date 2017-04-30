@@ -65,7 +65,7 @@ public class IRBuilder {
 	}
 
 	private boolean isRegister(String numberMaybe) {
-		return numberMaybe.matches("r\\d+");
+		return numberMaybe.matches("\\$T\\d+");
 	}
 
 	public void enterMain() {
@@ -122,7 +122,7 @@ public class IRBuilder {
 		String op2 = elementToIR(set[2]);
 		//checking if op1 or op2 was an expr ? change ops to what's left on stack : do nothing
 		trimStack();
-		//printList(stack);
+		//printList(stack,false);
 		if (!isNumber(op1) && !isRegister(op1) && currentTable.searchSymbol(op1) == null) {
 			//System.out.println("expr!!! " + stack.get(0));
 			op1 = stack.get(0);
