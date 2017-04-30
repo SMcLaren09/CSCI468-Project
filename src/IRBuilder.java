@@ -78,7 +78,8 @@ public class IRBuilder {
 		//System.out.println("RET");
 		ir_list.add("RET");
 		System.out.println("Printing IR Code: <size> " + ir_list.size());
-		printList(ir_list, true);
+		printList(ir_list, true);		
+		TinyBuilder build = new TinyBuilder(ir_list, currentTable);
 	}
 
 	public void buildWrite(String[] params) {
