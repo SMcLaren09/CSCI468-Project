@@ -120,7 +120,7 @@ public class Listener extends junkBaseListener {
 
 	@Override
 	public void enterAssign_expr(junkParser.Assign_exprContext ctx) {
-		System.out.println("Assignment Expression: " + ctx.getText());
+		//System.out.println("Assignment Expression: " + ctx.getText());
 		int count = ctx.getChildCount();
 		//for (int i = 0; i < count; i++) {
 		//	System.out.println("Child " + i + ": " + ctx.getChild(i).getText());
@@ -128,13 +128,13 @@ public class Listener extends junkBaseListener {
 	}
 	@Override
 	public void enterExpr(junkParser.ExprContext ctx) {
-		System.out.println("Expression: " + ctx.getText());
+		//System.out.println("Expression: " + ctx.getText());
 		ir.enterExpression();
 		expressionCeption++;
 	}
 	@Override
 	public void exitExpr(junkParser.ExprContext ctx) {
-		System.out.println("Exit Expression");
+		//System.out.println("Exit Expression");
 		if (--expressionCeption == 0) 
 			ir.exitExpression(true);
 		else
@@ -179,11 +179,12 @@ public class Listener extends junkBaseListener {
 	@Override
 	public void exitAssign_expr(junkParser.Assign_exprContext ctx) 
 	{
-		System.out.println("---------------------------------\n");
+		ir.assignmentStatement(ctx.getChild(0).getText());
+		//System.out.println("---------------------------------\n");
 	}
 
 	@Override
-	public void enterCond(junkParser.CondContext ctx) {
+	public void exitCond(junkParser.CondContext ctx) {
 		//System.out.println("Condition: " + ctx.getText());
 		int count = ctx.getChildCount();
 		String[] set = new String[count];

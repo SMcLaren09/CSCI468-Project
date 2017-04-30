@@ -12,7 +12,7 @@ public class IRBuilder {
 	private SymbolTable currentTable;
 
 	// Expression Builder
-	private ArrayList<String> expression;
+	//private ArrayList<String> expression;
 	private ArrayList<String> stack;
 	private ArrayList<String> postfixOutput;
 	private boolean inExpression = false;
@@ -26,7 +26,7 @@ public class IRBuilder {
 		labelStack = new ArrayList<>();
 		stack = new ArrayList<>();
 		postfixOutput = new ArrayList<>();
-		expression = new ArrayList<>();
+		//expression = new ArrayList<>();
 	}
 
 	public void updateTable(SymbolTable s) {
@@ -37,6 +37,12 @@ public class IRBuilder {
 		condition = null;
 		compIR = null;
 		dataType = ' ';
+		stack.clear();
+		postfixOutput.clear();
+	}
+
+	private boolean isNumber(String numberMaybe) {
+		return numberMaybe.matches("-?\\d*\\.?\\d+");
 	}
 
 	public void enterMain() {
@@ -77,7 +83,6 @@ public class IRBuilder {
 			//check if it floats
 			dataType = set[2].contains(".") ? 'F' : 'I';
 		} else { //get the data type from the variable
-			//System.out.println("VARIABLE!!!");
 			dataType = currentTable.searchSymbol(set[0]).getType().toUpperCase().toCharArray()[0];
 		}
 		//same steps for set[2]
@@ -86,12 +91,9 @@ public class IRBuilder {
 
 		//set compop after dataType is found
 		setCompop(set[1]);
-		routeCondition(set[0], set[2]);
+		routeCondition(elementToIR(set[0]), elementToIR(set[2]));
 	}
 
-	private boolean isNumber(String numberMaybe) {
-		return numberMaybe.matches("-?\\d*\\.?\\d+");
-	}
 
 	// Set the condition to be routed to for routeCondition
 	public void setCondition(String cond) {
@@ -100,6 +102,16 @@ public class IRBuilder {
 
 	// call appropriate condition statement
 	public void routeCondition(String op1, String op2) throws NullPointerException {
+		//checking if op1 or op2 was an expr ? change ops to what's left on stack : do nothing
+		if (!isNumber(op1) && currentTable.searchSymbol(op1) == null) {
+			System.out.println("expr!!! " + stack.get(0));
+			op1 = stack.get(0);
+		}
+		if (!isNumber(op2) && currentTable.searchSymbol(op2) == null) {
+			System.out.println("expr!!! " + stack.get(1));
+			op2 = stack.get(1);
+		}
+
 		//Determining which complex statement is executed in order to route the call
 		if (condition == null) 
 			throw new NullPointerException("Condition value is null");
@@ -238,7 +250,6 @@ public class IRBuilder {
 
 	public void addElement(String element) {
 		if (!inExpression) return;
-		//expression.add(element);
 		postfixOutput.add(element);
                 //printPostfix();
 	}
@@ -298,7 +309,7 @@ public class IRBuilder {
 
 	private void popPostFixStack(boolean completely) {
 		if (completely) {
-			if (postfixOutput.size() == 1) {}
+			if (postfixOutput.size() == 1) { stack.add(0,postfixOutput.get(0)); }
 			else {
 			inExpression = false;
 			while (!stack.isEmpty()) {
@@ -314,7 +325,6 @@ public class IRBuilder {
 			//System.out.println("Converting to IR...");
                         exprToIR();
 			}
-			stack.clear();
 			postfixOutput.clear();
 		} else {
 			stack.remove(0); //remove ")" tag
@@ -325,16 +335,35 @@ public class IRBuilder {
 		}
 	}
 
+	//if element is an immediate, then store to register
+	private String elementToIR(String el) {		
+		if (isNumber(el)) {
+			System.out.printf("STORE%c %s r%d\n",dataType,el,regNum);
+			el = "r" + regNum;
+			ir_list.add(String.format("STORE%c %s r%d\n",dataType,el,regNum++));
+		}
+		return el;
+	}
+
 	// Converts postfixOutput array values into IR code
 	private void exprToIR() {
 		// repurposing stack to work with IR building
 		stack.clear(); //superfluous action. should already be empty
+
+		// set dataType
+		if (isNumber(postfixOutput.get(0))) { //check if it floats
+			dataType = postfixOutput.get(0).contains(".") ? 'F' : 'I';
+		} else { //get the data type from the variable
+			dataType = currentTable.searchSymbol(postfixOutput.get(0)).getType().toUpperCase().toCharArray()[0];
+		}
+
+		//Build IR code
 		String a;
 		String b;
 		for (String el : postfixOutput) {
 			if (el.equals("+") || el.equals("-") || el.equals("*") || el.equals("/")) {
-				b = stack.remove(0);
-				a = stack.remove(0);
+				b = elementToIR(stack.remove(0));
+				a = elementToIR(stack.remove(0));
 				switch (el) {
 					case "+":
 						System.out.printf("ADD%c %s %s r%d\n",dataType,a,b,regNum);
@@ -363,5 +392,15 @@ public class IRBuilder {
 				stack.add(0, el);
 			}
 		}
+		//System.out.println("Remaining stack size: " + stack.size());
+		//System.out.println("Remaining element on stack: " + stack.get(0));
+	}
+
+	public void assignmentStatement(String variable) {
+		//convert value if immediate
+		String value = elementToIR(stack.get(0));
+		System.out.printf("STORE%c %s %s\n",dataType,value,variable);
+		ir_list.add(String.format("STORE%c %s %s\n",dataType,value,variable));
+		clean();
 	}		
 }
