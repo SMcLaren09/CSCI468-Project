@@ -50,9 +50,12 @@ public class IRBuilder {
 		//}
 		stack.removeAll(to_trim);
 	}
-	private void printList(ArrayList<String> list) {
+
+	//This is officially my new favorite method
+	private void printList(ArrayList<String> list, boolean vertical) {
+		String orient = vertical ? "\n" : " ";
 		for (String el : list) {
-			System.out.print(el + " ");
+			System.out.print(el + orient);
 		}
 		System.out.println();
 	}
@@ -66,11 +69,16 @@ public class IRBuilder {
 	}
 
 	public void enterMain() {
+		System.out.println("LABEL main");
+		System.out.println("LINK");
 		ir_list.add("LABEL main");
 		ir_list.add("LINK");
 	}
 	public void endProgram() {
+		System.out.println("RET");
 		ir_list.add("RET");
+		System.out.println("\nPrinting IR Code: <size> " + ir_list.size());
+		printList(ir_list, true);
 	}
 
 	public void buildWrite(String[] params) {
@@ -179,21 +187,30 @@ public class IRBuilder {
 		// LABEL label#
 		// [store immediate to register] (regNum++)
 		// [evaluate condition with jump to label#++]
-		// TODO: Fix condition issue of condition op being an expression
-		//System.out.println("Building While...\nLABEL label" + labelNum);
+
+		//Note: may be issue with IR order if registers weren't ifninite. Address if there's time
+		System.out.println("LABEL label" + labelNum);
 		ir_list.add("LABEL label" + labelNum++);
+		
+		/*
+		String temp;
 		if (isNumber(op1)) {
-			System.out.println("STORE" + dataType + " " + op1 + " " + (op1 = "$T" + regNum));
-			ir_list.add("STORE" + dataType + " " + op1 + " " + (op1 = "$T" + regNum++));
+			temp = "$T" + regNum++;
+			System.out.println("STORE" + dataType + " " + op1 + " " + temp);
+			ir_list.add("STORE" + dataType + " " + op1 + " " + temp);
+			op1 = temp;
 		}
 		if (isNumber(op2)) {
-			System.out.println("STORE" + dataType + " " + op2 + " " + (op2 = "$T" + regNum));
-			ir_list.add("STORE" + dataType + " " + op2 + " " + (op2 = "$T" + regNum++));
+			temp = "$T" + regNum++;
+			System.out.println("STORE" + dataType + " " + op2 + " " + temp);
+			ir_list.add("STORE" + dataType + " " + op2 + " " + temp);
+			op2 = temp;
 		}
+		*/
 		//push new labelNum onto labelStack
 		labelStack.add(0,"label" + labelNum);
 		labelStack.add(0,"label" + (labelNum - 1));
-		System.out.println(compIR + " " + op1 + " " + op2 + " label" + (labelNum));
+		System.out.println(compIR + " " + op1 + " " + op2 + " label" + labelNum);
 		ir_list.add(compIR + " " + op1 + " " + op2 + " label" + labelNum++);
 		//System.out.println("Next regNum: " + regNum + "\nNext labelNum: " + labelNum);
 
@@ -215,14 +232,21 @@ public class IRBuilder {
 		// [store immediate to register] (regNum++)
 		// [evaluate condition with jump to label#]
 		//System.out.println("Building If Header...");
+		String temp;
+		/*
 		if (isNumber(op1)) {
-			System.out.println("STORE" + dataType + " " + op1 + " " + (op1 = "$T" + regNum));
-			ir_list.add("STORE" + dataType + " " + op1 + " " + (op1 = "$T" + regNum++));
+			temp = "$T" + regNum++;
+			System.out.println("STORE" + dataType + " " + op1 + " " + temp);
+			ir_list.add("STORE" + dataType + " " + op1 + " " + temp);
+			op1 = temp;
 		}
 		if (isNumber(op2)) {
-			System.out.println("STORE" + dataType + " " + op2 + " " + (op2 = "$T" + regNum));
-			ir_list.add("STORE" + dataType + " " + op2 + " " + (op2 = "$T" + regNum++));
+			temp = "$T" + regNum++;
+			System.out.println("STORE" + dataType + " " + op2 + " " + temp);
+			ir_list.add("STORE" + dataType + " " + op2 + " " + temp);
+			op2 = temp;
 		}
+		*/
 		// Add comparison instruction and push labelNum to stack
 		labelStack.add(0,"label" + labelNum);
 		System.out.println(compIR + " " + op1 + " " + op2 + " label" + (labelNum));
@@ -355,8 +379,8 @@ public class IRBuilder {
 		if (isNumber(el)) {
 			dataType = el.contains(".") ? 'F' : 'I';
 			System.out.printf("STORE%c %s r%d\n",dataType,el,regNum);
-			el = "r" + regNum;
-			ir_list.add(String.format("STORE%c %s r%d\n",dataType,el,regNum++));
+			ir_list.add(String.format("STORE%c %s r%d",dataType,el,regNum++));
+			el = "r" + (regNum-1);
 		}
 		return el;
 	}
@@ -417,7 +441,7 @@ public class IRBuilder {
 		dataType = currentTable.searchSymbol(variable).getType().toUpperCase().toCharArray()[0];
 		String value = elementToIR(stack.get(0));
 		System.out.printf("STORE%c %s %s\n",dataType,value,variable);
-		ir_list.add(String.format("STORE%c %s %s\n",dataType,value,variable));
+		ir_list.add(String.format("STORE%c %s %s",dataType,value,variable));
 		clean();
 	}		
 }
