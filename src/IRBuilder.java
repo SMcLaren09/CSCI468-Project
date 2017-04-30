@@ -305,13 +305,6 @@ public class IRBuilder {
                 }
                 //printPostfix();
 	}
-	public void expressionToIR() {
-		//convert to postfix
-		toPostfix();
-	}
-
-	private void toPostfix() {
-	}
         
         public void printPostfix() {
                System.out.print("Stack = ");
@@ -360,6 +353,7 @@ public class IRBuilder {
 	//if element is an immediate, then store to register
 	private String elementToIR(String el) {		
 		if (isNumber(el)) {
+			dataType = el.contains(".") ? 'F' : 'I';
 			System.out.printf("STORE%c %s r%d\n",dataType,el,regNum);
 			el = "r" + regNum;
 			ir_list.add(String.format("STORE%c %s r%d\n",dataType,el,regNum++));
@@ -420,6 +414,7 @@ public class IRBuilder {
 
 	public void assignmentStatement(String variable) {
 		//convert value if immediate
+		dataType = currentTable.searchSymbol(variable).getType().toUpperCase().toCharArray()[0];
 		String value = elementToIR(stack.get(0));
 		System.out.printf("STORE%c %s %s\n",dataType,value,variable);
 		ir_list.add(String.format("STORE%c %s %s\n",dataType,value,variable));
