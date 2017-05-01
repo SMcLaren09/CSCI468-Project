@@ -52,12 +52,14 @@ public class IRBuilder {
 	}
 
 	//This is officially my new favorite method
-	private void printList(ArrayList<String> list, boolean vertical) {
+	private void printList(ArrayList<String> list, boolean vertical, boolean commented) {
 		String orient = vertical ? "\n" : " ";
+		String comment = commented ? ";" : "";
 		for (String el : list) {
-			System.out.print(el + orient);
+			System.out.print(comment + el + orient);
 		}
-		System.out.println();
+		if (!vertical)
+			System.out.println();
 	}
 
 	private boolean isNumber(String numberMaybe) {
@@ -78,7 +80,9 @@ public class IRBuilder {
 		//System.out.println("RET");
 		ir_list.add("RET");
 		//System.out.println("Printing IR Code: <size> " + ir_list.size());
-		//printList(ir_list, true);		
+		System.out.println(";IR code");
+		printList(ir_list, true, true);
+		System.out.println(";tiny code");		
 		TinyBuilder build = new TinyBuilder(ir_list, currentTable);
 		build.parseIrList();
 		build.print(true);

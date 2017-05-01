@@ -8,7 +8,6 @@ public class TinyBuilder {
 	private ArrayList<String> vars;
 	private int regNum;
 	private char dataType;
-	//TODO: Symbol table needs to be root Table with the ability to check its children or something... issue with string variables.
 
 	public TinyBuilder(ArrayList<String> ir_list, SymbolTable table) {
 		this.ir_list = ir_list;
