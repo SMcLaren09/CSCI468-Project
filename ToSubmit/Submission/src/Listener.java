@@ -3,18 +3,20 @@ import java.util.*;
 public class Listener extends junkBaseListener {
 
 	SymbolTable s;
+	IRBuilder ir;
 	Symbol symbol;
 	boolean newTable, newTableHeader, programHeader = false;
 	String variableType,
 	       variableValue;
 	ArrayList<String> variableName = new ArrayList<>();
 	int block = 1;
+	int expressionCeption = 0; // when dealing with nested expressions
 
 	@Override
 	public void enterProgram(junkParser.ProgramContext ctx) {
 //		System.out.println("enterProgram...");
-
 		s = new SymbolTable(null, null);
+		ir = new IRBuilder(s);
 		s.setName("GLOBAL");
 		programHeader = true;
         }
@@ -22,7 +24,9 @@ public class Listener extends junkBaseListener {
 	@Override
 	public void exitProgram(junkParser.ProgramContext ctx) {
 //		System.out.println("Exiting Program...");
-		s.printAll();
+		ir.endProgram();
+		//callTinyCodeConverter
+		//s.printAll();
         }
 
 	@Override
@@ -31,6 +35,8 @@ public class Listener extends junkBaseListener {
 		pushSymbolTable();
 		newTable = true;
        		newTableHeader = true;
+		//todo: allow for multiple function declarations
+		ir.enterMain();
 	}
 
 	@Override
@@ -113,28 +119,111 @@ public class Listener extends junkBaseListener {
 	}
 
 	@Override
+	public void enterAssign_expr(junkParser.Assign_exprContext ctx) {
+		//System.out.println("Assignment Expression: " + ctx.getText());
+		int count = ctx.getChildCount();
+		//for (int i = 0; i < count; i++) {
+		//	System.out.println("Child " + i + ": " + ctx.getChild(i).getText());
+		//}
+	}
+	@Override
+	public void enterExpr(junkParser.ExprContext ctx) {
+		//System.out.println("Expression: " + ctx.getText());
+		ir.enterExpression();
+		expressionCeption++;
+	}
+	@Override
+	public void exitExpr(junkParser.ExprContext ctx) {
+		//System.out.println("Exit Expression");
+		if (--expressionCeption == 0) 
+			ir.exitExpression(true);
+		else
+			ir.exitExpression(false);
+	}
+	@Override
+	public void enterExpr_prefix(junkParser.Expr_prefixContext ctx) 
+	{
+		//System.out.println("Expression Prefix: " + ctx.getText());
+	}
+	@Override
+	public void enterFactor(junkParser.FactorContext ctx) {
+		//System.out.println("Factor: " + ctx.getText());
+		int count = ctx.getChildCount();
+		//for (int i = 0; i < count; i++) {
+		//	System.out.println("Child " + i + ": " + ctx.getChild(i).getText());
+		//}
+	}
+	@Override
+	public void enterPostfix_expr(junkParser.Postfix_exprContext ctx) 
+	{
+		//System.out.println("Postfix: " + ctx.getText());
+	}
+	@Override
+	public void enterPrimary(junkParser.PrimaryContext ctx)
+	{
+		//System.out.println("Primary: " + ctx.getText());
+		if (ctx.getChildCount() == 1)
+		ir.addElement(ctx.getText());
+	}
+	@Override
+	public void enterAddop(junkParser.AddopContext ctx) {
+		//System.out.println("Addop: " + ctx.getText());
+		ir.addOperator(ctx.getText());
+	}
+	@Override
+	public void enterMulop(junkParser.MulopContext ctx) 
+	{
+		//System.out.println("Mulop: " + ctx.getText());
+		ir.addOperator(ctx.getText());
+	}
+	@Override
+	public void exitAssign_expr(junkParser.Assign_exprContext ctx) 
+	{
+		ir.assignmentStatement(ctx.getChild(0).getText());
+		//System.out.println("---------------------------------\n");
+	}
+
+	@Override
+	public void exitCond(junkParser.CondContext ctx) {
+		//System.out.println("Condition: " + ctx.getText());
+		int count = ctx.getChildCount();
+		String[] set = new String[count];
+		for (int i = 0; i < count; i++) {
+			set[i] = ctx.getChild(i).getText();
+		}
+		ir.parseComparison(set);
+	}
+
+	@Override
 	public void enterIf_stmt(junkParser.If_stmtContext ctx) {
-//                System.out.println("Enter If stmt");
+                //System.out.println("Enter If stmt");
 		pushSymbolTable();
 	        s.setName("BLOCK " + block);
         	block++;
+		
+		//flag IRBuilder
+		ir.setCondition("if");
 	}
 
 	@Override
 	public void exitIf_stmt(junkParser.If_stmtContext ctx) {
-//              System.out.println("Exit If stmt");
+                //System.out.println("Exit If stmt");
 		popSymbolTable();
+		ir.exitIf();
+		//flag IRBuilder
+		ir.setCondition(null);
 	}
 
 	@Override
 	public void enterElse_part(junkParser.Else_partContext ctx) {
-//              System.out.println("Enter Else stmt");
+                //System.out.println("Enter Else stmt");
 		//get out of if  block and enter else block
         	if (ctx.getChildCount() > 0) {
 			popSymbolTable();
         		pushSymbolTable();
         		s.setName("BLOCK " + block);
 	        	block++;
+			ir.enterElsePart();
         		//use exitIf() to pop back to parent symbolTable
 		}
 	}
@@ -146,17 +235,47 @@ public class Listener extends junkBaseListener {
 
 	@Override
 	public void enterWhile_stmt(junkParser.While_stmtContext ctx) {
-//              System.out.println("Enter While stmt");
+                //System.out.println("WHILE | " + ctx.getText());
 		pushSymbolTable();
 		s.setName("BLOCK " + block);
 		block++;
+		
+		//flag IRBuilder
+		ir.setCondition("while");
         }
 
 	@Override
 	public void exitWhile_stmt(junkParser.While_stmtContext ctx) {
 //		System.out.println("Exit While stmt");
 		popSymbolTable();
+		ir.endWhile();
+		//flag IRBuilder
+		ir.setCondition(null);
 	}
+
+	@Override
+	public void enterWrite_stmt(junkParser.Write_stmtContext ctx) {
+		//Attempting to expand the context parser
+		//System.out.println("Expanding Write statement!");
+		//System.out.println(ctx.getText());
+		//int count = ctx.getChildCount();
+		//list: | WRITE | ( | param1,param2,... | ) | ; |
+		String[] params = ctx.getChild(2).getText().split(",");
+		ir.buildWrite(params);
+	}
+
+	@Override
+	public void enterRead_stmt(junkParser.Read_stmtContext ctx) {
+		//Attempting to expand the context parser
+		//System.out.println("Expanding Read statement!");
+		//System.out.println(ctx.getText());
+		//int count = ctx.getChildCount();
+		//list: | READ | ( | param1,param2,... | ) | ; |
+		String[] params = ctx.getChild(2).getText().split(",");
+		ir.buildRead(params);
+	}
+
+
 
 	public SymbolTable getSymbolTable() {
 		return s;
@@ -164,11 +283,20 @@ public class Listener extends junkBaseListener {
 
 	public void popSymbolTable() {
 		s = s.getParent();
+		ir.updateTable(s);
 	}
 
 	public void pushSymbolTable() {
 		//SymbolTable newTable = new SymbolTable(s, s.getScopedVariables());
 		//s = newTable;
 		s = s.createChild();
+		ir.updateTable(s);
 	}
 }
+
+
+//
+//		int count = ctx.getChildCount();
+//		for (int i = 0; i < count; i++) {
+//			System.out.println(ctx.getChild(i).getText());
+//		}
