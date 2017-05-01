@@ -86,7 +86,14 @@ public class TinyBuilder {
 		code = code.replace("$T","r");
 		String[] ops = code.split(" ");
 		//we'll see if we need to deal with variable checking...
-		tiny.add(String.format("move %s %s",ops[1],ops[2]));
+		//tiny.add(String.format("%s matches register? %b",ops[1],ops[1].matches("r\\d+")));
+		//tiny.add(String.format("%s matches register? %b",ops[2],ops[2].matches("r\\d+")));
+		if (!ops[1].matches("r\\d+") && !ops[2].matches("r\\d+")) {
+			tiny.add(String.format("move %s r0",ops[1])); //use temp register r0
+			tiny.add(String.format("move r0 %s",ops[2]));
+		} else {
+			tiny.add(String.format("move %s %s",ops[1],ops[2]));
+		}
 	}
 
 	// COMP[T] op1 op2 label#
@@ -94,7 +101,12 @@ public class TinyBuilder {
 		code = code.replace("$T","r");
 		String[] ops = code.split(" ");
 		String compop = "j" + ((String)ops[0].subSequence(0,ops[0].length() - 1)).toLowerCase();
-		tiny.add(String.format("cmp%c %s %s",dataType,ops[1],ops[2]));
+		if (!ops[1].matches("r\\d+") && !ops[2].matches("r\\d+")) {
+			tiny.add(String.format("move %s r0",ops[2])); //use temp register r0
+			tiny.add(String.format("cmp%c %s r0",dataType,ops[1]));
+		} else {
+			tiny.add(String.format("cmp%c %s %s",dataType,ops[1],ops[2]));
+		}
 		tiny.add(String.format("%s %s",compop,ops[3]));
 	}
 
